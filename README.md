@@ -1,6 +1,8 @@
 # Fable.Websockets.Elmish
 Library wrapping Fable.Websockets.Client to fit into the Elmish architecture
 
+[![Build Status](https://travis-ci.org/fable-websockets/Fable.Websockets.Elmish.svg?branch=master)](https://travis-ci.org/fable-websockets/Fable.Websockets.Elmish)
+
 ## Building
 
 Make sure the following **requirements** are installed in your system:
