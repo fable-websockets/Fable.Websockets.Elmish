@@ -2,7 +2,7 @@
 Library wrapping Fable.Websockets.Client to fit into the Elmish architecture
 
 [![Build Status](https://travis-ci.org/fable-websockets/Fable.Websockets.Elmish.svg?branch=master)](https://travis-ci.org/fable-websockets/Fable.Websockets.Elmish)
-[![NuGet](https://img.shields.io/nuget/v/Nuget.Core.svg)](https://www.nuget.org/packages/Fable.Websockets.Elmish/)
+[![NuGet](https://img.shields.io/nuget/v/Fable.Websockets.Elmish.svg)](https://www.nuget.org/packages/Fable.Websockets.Elmish/)
 
 ## Building
 
