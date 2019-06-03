@@ -197,3 +197,6 @@ docs/tools/FSharp.Formatting.svclog
 project.lock.json
 build/Fable.Websockets.Elmish.0.1.1.nupkg
 build/Fable.Websockets.Elmish.0.1.1.nupkg
+
+.ionide/
+.vscode/

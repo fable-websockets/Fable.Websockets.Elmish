@@ -7,7 +7,6 @@ nuget FSharp.Core
 nuget Fable.Core
 
 clitool dotnet-fable
-clitool Microsoft.DotNet.Watcher.Tools
 
 # client packages
 nuget Fable.Import.Browser
@@ -25,4 +24,4 @@ nuget Fable.Websockets.Suave
 
 group build 
     source https://nuget.org/api/v2
-    nuget FAKE
+    nuget FAKE prerelease
