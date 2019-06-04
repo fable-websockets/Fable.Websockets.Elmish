@@ -1,3 +1,5 @@
+version 5.206.0
+
 source https://nuget.org/api/v2
 storage:none
 
@@ -22,6 +24,11 @@ nuget Fable.JsonConverter
 nuget Fable.Websockets.Client
 nuget Fable.Websockets.Suave
 
-group build 
-    source https://nuget.org/api/v2
-    nuget FAKE prerelease
+// [ FAKE GROUP ]
+group NetcoreBuild
+    source https://api.nuget.org/v3/index.json
+
+nuget Fake.Core.ReleaseNotes
+    nuget Fake.Core.Target prerelease
+    nuget Fake.DotNet.Cli
+    nuget Fake.JavaScript.Yarn

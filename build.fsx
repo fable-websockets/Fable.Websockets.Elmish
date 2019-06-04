@@ -1,11 +1,9 @@
-// include Fake libs
-#r "./packages/build/FAKE/tools/FakeLib.dll"
+#load ".fake/build.fsx/intellisense.fsx"
 
 open Fake.Core
 open Fake.DotNet
 open Fake.IO
 open Fake.JavaScript
-open Fake.Runtime
 
 open Globbing.Operators
 open Fake.Core.TargetOperators
@@ -83,7 +81,7 @@ Target.create "Meta" (fun _ ->
 
 Target.create "Package" (fun _ ->            
     !! @"./src/**/*.fsproj"
-    |> Seq.iter (DotNet.pack (fun p -> { p with OutputPath = Some <| Path.getCurrentDirectory() + "/build" }))
+    |> Seq.iter (DotNet.pack (fun p -> { p with OutputPath = Some <| System.Environment.CurrentDirectory + "/build" }))
 )
 
 // Build order
