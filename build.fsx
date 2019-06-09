@@ -90,4 +90,4 @@ Target.create "Package" (fun _ ->
 "Build" ==> "RunElmishSample"
 
 // start build
-Target.runOrDefault "Build"
+Target.runOrDefaultWithArguments "Build"
