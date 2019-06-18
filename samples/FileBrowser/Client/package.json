@@ -1,5 +1,9 @@
 {
   "scripts": {
     "start-sample": "webpack-dev-server"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^3.7.2",
+    "webpack-cli": "^3.3.4"
   }
 }

@@ -56,8 +56,8 @@ Target.create "Build" (fun _ ->
 
 Target.create "RunElmishSample" (fun _ ->
     // Start client
-    [ async { return (DotNet.exec (fun p -> {p with WorkingDirectory = "./samples/FileBrowser/Server/"}) "watch run") }
-      async { return (DotNet.exec (fun p -> {p with WorkingDirectory = "./samples/FileBrowser/Client/"}) "fable webpack-dev-server") }
+    [ async { return (DotNet.exec (fun p -> {p with WorkingDirectory = "./samples/FileBrowser/Server/"}) "watch run" |> ignore) }
+      async { return (Yarn.exec "start-sample" (fun p -> {p with WorkingDirectory = "./samples/FileBrowser/Client/"})) }
     ] |> Async.Parallel |> Async.RunSynchronously |> ignore
 )
 

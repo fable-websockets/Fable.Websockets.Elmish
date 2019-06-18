@@ -14,12 +14,14 @@ nuget Fable.Elmish
 nuget Fable.Elmish.React
 nuget Fable.React
 
+nuget Fable.Websockets.Client
+
 # server packages
 nuget Suave
 nuget Newtonsoft.Json
 nuget Fable.JsonConverter
 
-nuget Fable.Websockets.Client
+nuget Fable.Websockets.Suave
 
 // [ FAKE GROUP ]
 group NetcoreBuild

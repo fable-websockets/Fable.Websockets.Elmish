@@ -13,8 +13,7 @@ var babelOptions = {
             },
             "modules": false
         }]
-    ],
-    plugins: ["transform-runtime"]
+    ]
 };
 
 
