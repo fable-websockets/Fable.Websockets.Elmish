@@ -20,11 +20,10 @@ let deployDir = "./deploy/"
 
 let projectFolders  =  [
                          (DirectoryInfo.getMatchingFilesRecursive "*.fsproj" (DirectoryInfo.ofPath "./src"))  
-                         (DirectoryInfo.getMatchingFilesRecursive "*.csproj" (DirectoryInfo.ofPath "./src"))
-                         (DirectoryInfo.getMatchingFilesRecursive "*.csproj" (DirectoryInfo.ofPath "./samples/"))
                          (DirectoryInfo.getMatchingFilesRecursive "*.fsproj" (DirectoryInfo.ofPath "./samples/"))
-                       ]                       
+                       ]
                        |> Array.concat
+                       |> Seq.filter(fun path -> not <| path.FullName.Contains(".fable"))
                        |> Seq.map (fun m -> m.Directory.FullName)
 
 
@@ -56,8 +55,8 @@ Target.create "Build" (fun _ ->
 
 Target.create "RunElmishSample" (fun _ ->
     // Start client
-    [ async { return (DotNet.exec (fun p -> {p with WorkingDirectory = "./samples/FileBrowser/Server/"}) "watch run" |> ignore) }
-      async { return (Yarn.exec "start-sample" (fun p -> {p with WorkingDirectory = "./samples/FileBrowser/Client/"})) }
+    [  async { return (DotNet.exec (fun p -> {p with WorkingDirectory = "./samples/FileBrowser/Server/"}) "watch" "run" |> ignore) }
+       async { return (Yarn.exec "start-sample" (fun p -> {p with WorkingDirectory = "./samples/FileBrowser/Client/"})) }
     ] |> Async.Parallel |> Async.RunSynchronously |> ignore
 )
 

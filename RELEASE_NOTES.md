@@ -1,5 +1,6 @@
 ## 0.2.0
-- Migrate to Fable2 compiler.
+- Migrate to Fable2 compiler
+- Replace Newtonsoft Json serializer with Thoth.Net
 
 ## 0.1.1
 - Fix for Suave >= v2.1.0 

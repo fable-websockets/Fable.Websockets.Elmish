@@ -18,8 +18,6 @@ nuget Fable.Websockets.Client
 
 # server packages
 nuget Suave
-nuget Newtonsoft.Json
-nuget Fable.JsonConverter
 
 nuget Fable.Websockets.Suave
 
