@@ -12,12 +12,6 @@ open Fake.Core.TargetOperators
 let buildDir  = "./build/"
 let deployDir = "./deploy/"
 
-// let nugetProjectFolders = [ (DirectoryInfo.getMatchingFilesRecursive "*.fsproj" (DirectoryInfo.ofPath "./src"))  
-//                             (DirectoryInfo.getMatchingFilesRecursive "*.csproj" (DirectoryInfo.ofPath "./src"))
-//                           ]
-//                           |> Array.concat
-//                           |> Seq.map (fun m -> m.Directory.FullName)
-
 let projectFolders  =  [
                          (DirectoryInfo.getMatchingFilesRecursive "*.fsproj" (DirectoryInfo.ofPath "./src"))  
                          (DirectoryInfo.getMatchingFilesRecursive "*.fsproj" (DirectoryInfo.ofPath "./samples/"))
