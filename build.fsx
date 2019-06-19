@@ -65,7 +65,7 @@ Target.create "Meta" (fun _ ->
       "<PackageIconUrl></PackageIconUrl>"
       "<RepositoryUrl>https://github.com/ncthbrt/Fable.Websockets.Elmish</RepositoryUrl>"
       "<PackageTags>fable;fsharp;elmish;websockets;observables</PackageTags>"
-      "<Authors>Nick Cuthbert</Authors>"
+      "<Authors>Nick Cuthbert;OlegZee</Authors>"
       sprintf "<Version>%s</Version>" (string release.SemVer)
       "</PropertyGroup>"
       "</Project>"]
