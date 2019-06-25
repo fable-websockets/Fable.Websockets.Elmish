@@ -1,69 +1,62 @@
-// include Fake libs
-#r "./packages/build/FAKE/tools/FakeLib.dll"
+#load ".fake/build.fsx/intellisense.fsx"
 
-open Fake
-open Fake.DotNetCli
-open Fake.ProcessHelper
-open Fake.FileSystem
-open Fake.YarnHelper
+open Fake.Core
+open Fake.DotNet
+open Fake.IO
+open Fake.JavaScript
 
+open Globbing.Operators
+open Fake.Core.TargetOperators
 
 // Directories
 let buildDir  = "./build/"
 let deployDir = "./deploy/"
 
-let nugetProjectFolders = [ (filesInDirMatchingRecursive "*.fsproj" (directoryInfo "./src"))  
-                            (filesInDirMatchingRecursive "*.csproj" (directoryInfo "./src"))
-                          ]
-                          |> Array.concat
-                          |> Seq.map (fun m -> m.Directory.FullName)
-
 let projectFolders  =  [
-                         (filesInDirMatchingRecursive "*.fsproj" (directoryInfo "./src"))  
-                         (filesInDirMatchingRecursive "*.csproj" (directoryInfo "./src"))
-                         (filesInDirMatchingRecursive "*.csproj" (directoryInfo "./samples/"))
-                         (filesInDirMatchingRecursive "*.fsproj" (directoryInfo "./samples/"))
-                       ]                       
+                         (DirectoryInfo.getMatchingFilesRecursive "*.fsproj" (DirectoryInfo.ofPath "./src"))  
+                         (DirectoryInfo.getMatchingFilesRecursive "*.fsproj" (DirectoryInfo.ofPath "./samples/"))
+                       ]
                        |> Array.concat
+                       |> Seq.filter(fun path -> not <| path.FullName.Contains(".fable"))
                        |> Seq.map (fun m -> m.Directory.FullName)
 
 
 
 // Targets
-Target "Clean" (fun _ ->
-    CleanDirs [buildDir; deployDir]
+Target.create "Clean" (fun _ ->
+    Shell.cleanDirs [buildDir; deployDir]
 )
 
-Target "YarnRestore" (fun _->        
+Target.create "YarnRestore" (fun _->        
    ["./";"./samples/FileBrowser/Client/"; "./src/Fable.Websockets.Elmish/"]
-   |> Seq.iter (fun dir -> Yarn (fun p ->{ p with Command = Install Standard; WorkingDirectory = dir}))
+   |> Seq.iter (fun dir -> Yarn.install (fun p ->{ p with WorkingDirectory = dir}))
    |> ignore   
 )
 
-Target "Restore" (fun _->    
+Target.create "Restore" (fun _->    
     projectFolders
-    |> Seq.map (fun project-> DotNetCli.Restore (fun p-> {p with Project=project}))
-    |> Seq.toArray    
+    |> Seq.map (DotNet.restore id)
+    |> Seq.toArray
     |> ignore
 )
 
-Target "Build" (fun _ ->
+Target.create "Build" (fun _ ->
     projectFolders
-    |> Seq.map (fun project-> DotNetCli.Build (fun p-> { p with Project=project }))
+    |> Seq.map (DotNet.build id)
     |> Seq.toArray    
     |> ignore        
 )
 
-Target "RunElmishSample" (fun _ ->
+Target.create "RunElmishSample" (fun _ ->
     // Start client
-    [ async { return (DotNetCli.RunCommand (fun p -> {p with WorkingDir = "./samples/FileBrowser/Server/"}) "watch run") }
-      async { return (DotNetCli.RunCommand (fun p -> {p with WorkingDir = "./samples/FileBrowser/Client/"}) "fable webpack-dev-server") }
+    [  async { return (DotNet.exec (fun p -> {p with WorkingDirectory = "./samples/FileBrowser/Server/"}) "watch" "run" |> ignore) }
+       async { return (Yarn.exec "start-sample" (fun p -> {p with WorkingDirectory = "./samples/FileBrowser/Client/"})) }
     ] |> Async.Parallel |> Async.RunSynchronously |> ignore
 )
 
-let release =  ReadFile "RELEASE_NOTES.md" |> ReleaseNotesHelper.parseReleaseNotes                
+let release =  File.read "RELEASE_NOTES.md" |> ReleaseNotes.parse
 
-Target "Meta" (fun _ ->
+Target.create "Meta" (fun _ ->
     [ "<Project xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">"
       "<PropertyGroup>"
       "<Description>Library for strongly typed websocket use in Fable</Description>"
@@ -72,17 +65,16 @@ Target "Meta" (fun _ ->
       "<PackageIconUrl></PackageIconUrl>"
       "<RepositoryUrl>https://github.com/ncthbrt/Fable.Websockets.Elmish</RepositoryUrl>"
       "<PackageTags>fable;fsharp;elmish;websockets;observables</PackageTags>"
-      "<Authors>Nick Cuthbert</Authors>"
+      "<Authors>Nick Cuthbert;OlegZee</Authors>"
       sprintf "<Version>%s</Version>" (string release.SemVer)
       "</PropertyGroup>"
       "</Project>"]
-    |> WriteToFile false "src/Meta.props"    
+    |> File.write false "src/Meta.props"    
 )
 
-
-Target "Package" (fun _ ->            
+Target.create "Package" (fun _ ->            
     !! @"./src/**/*.fsproj"
-    |> Seq.iter (fun project-> DotNetCli.Pack (fun p-> { p with Project = project; OutputPath = currentDirectory+"/build" }))
+    |> Seq.iter (DotNet.pack (fun p -> { p with OutputPath = Some <| System.Environment.CurrentDirectory + "/build" }))
 )
 
 // Build order
@@ -91,4 +83,4 @@ Target "Package" (fun _ ->
 "Build" ==> "RunElmishSample"
 
 // start build
-RunTargetOrDefault "Build"
+Target.runOrDefaultWithArguments "Build"

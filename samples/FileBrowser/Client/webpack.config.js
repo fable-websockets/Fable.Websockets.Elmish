@@ -1,22 +1,20 @@
 var path = require("path");
 var webpack = require("webpack");
-var fableUtils = require("fable-utils");
 
 function resolve(filePath) {
   return path.join(__dirname, filePath)
 }
 
-var babelOptions = fableUtils.resolveBabelOptions({
-  presets: [
-    ["env", {
-      "targets": {
-        "browsers": ["last 2 versions"]
-      },
-      "modules": false
-    }]
-  ],
-  plugins: ["transform-runtime"]
-});
+var babelOptions = {
+    presets: [
+        ["@babel/preset-env", {
+            "targets": {
+                "browsers": ["last 2 versions"]
+            },
+            "modules": false
+        }]
+    ]
+};
 
 
 var isProduction = process.argv.indexOf("-p") >= 0;
@@ -30,9 +28,6 @@ module.exports = {
     path: resolve('./public'),
     publicPath: "/public",
     filename: "bundle.js"
-  },
-  resolve: {
-    modules: [ resolve("../../../node_modules/")]
   },
   devServer: {
     proxy: {

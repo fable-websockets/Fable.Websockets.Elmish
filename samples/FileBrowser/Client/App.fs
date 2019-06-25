@@ -1,24 +1,19 @@
 module FileBrowser.Client
 
-open System
-
-open FileBrowser.Protocol
-
-open Fable.Core
 open Fable.Core.JsInterop
-open Fable.Import
 
 open Elmish
 open Elmish.React
 
-open Fable.Websockets.Client
+open Fable.React.Helpers
+open Fable.React.Props
+module R = Fable.React.Standard
+
 open Fable.Websockets.Protocol
-
-open Fable.Helpers.React.Props
-module R = Fable.Helpers.React
-
 open Fable.Websockets.Elmish
 open Fable.Websockets.Elmish.Types
+
+open FileBrowser.Protocol
 
 type ViewModel = 
     | EmailPrompt of string    
@@ -30,7 +25,7 @@ type ConnectionState = NotConnected | Connected
 
 type Model = { viewModel: ViewModel; 
                connectionState: ConnectionState; 
-               socket: SocketHandle<ServerMsg,ClientMsg>
+               socket: SocketHandle<ServerMsg>
                email: string
                initialDirectory: string option
              }
@@ -85,7 +80,7 @@ let inline update msg prevState =
 
 let emailView (email:string) dispatch =        
     R.div[] [
-        R.h1 [] [R.str "Enter your email"]
+        R.h1 [] [str "Enter your email"]
         R.br []
         R.input [Value email; OnChange (fun e-> (dispatch<<ApplicationMsg<<SetEmailText<<string) e.target?value)]
         R.input [Type "submit"; OnClick (fun e-> (dispatch<<ApplicationMsg<<SubmitUserEmail<<string) email)]
@@ -94,23 +89,23 @@ let emailView (email:string) dispatch =
 let fileView name contents dispatch = 
     R.div [] 
           [
-             R.a [Href "#" ;OnClick (fun _ -> dispatch (ApplicationMsg CloseFile))] [R.str <| "👈" + name]
+             R.a [Href "#" ;OnClick (fun _ -> dispatch (ApplicationMsg CloseFile))] [str <| "👈" + name]
              R.br []
-             R.text [] [R.str contents]
+             R.text [] [str contents]
           ]
 
 let fileEntrySubview dispatch fileReference =
     match fileReference with
-    | FileReference.File file -> [R.a [Href "#";OnClick (fun _ -> (dispatch<<ApplicationMsg<<OpenFile) file)] [R.str ("📝" + file)]; R.br []]
-    | FileReference.Folder folder -> [R.a [Href "#"; OnClick (fun _ -> (dispatch<<ApplicationMsg<<OpenChildFolder) folder)] [R.str ("📁" + folder)]; R.br []]    
+    | FileReference.File file -> [R.a [Href "#";OnClick (fun _ -> (dispatch<<ApplicationMsg<<OpenFile) file)] [str ("📝" + file)]; R.br []]
+    | FileReference.Folder folder -> [R.a [Href "#"; OnClick (fun _ -> (dispatch<<ApplicationMsg<<OpenChildFolder) folder)] [str ("📁" + folder)]; R.br []]    
 
 
 let folderView intialDirectory (folder: string, files: FileReference list) dispatch =        
     
     let headers = if intialDirectory = folder then
-                    [R.div [] [R.str folder]; R.br []]                     
+                    [R.div [] [str folder]; R.br []]                     
                   else
-                    [R.a [Href "#"; OnClick (fun _ -> dispatch (ApplicationMsg OpenParentFolder))] [R.str <| "☝️ "+folder];R.br []]                     
+                    [R.a [Href "#"; OnClick (fun _ -> dispatch (ApplicationMsg OpenParentFolder))] [str <| "☝️ "+folder];R.br []]                     
 
     let files = files 
                 |> List.fold (fun prev fileReference -> (fileEntrySubview dispatch fileReference) @ prev) [] 
@@ -120,7 +115,7 @@ let folderView intialDirectory (folder: string, files: FileReference list) dispa
         
 
 let view model dispatch = 
-    let loader = R.text [] [R.str "loading..."]    
+    let loader = R.text [] [str "loading..."]    
 
     match model.viewModel with
     | EmailPrompt email -> emailView email dispatch 
@@ -130,6 +125,6 @@ let view model dispatch =
     
 
 Program.mkProgram initialState update view
-|> Program.withReact "elmish-app"
+|> Program.withReactBatched "elmish-app"
 |> Program.withConsoleTrace
 |> Program.run

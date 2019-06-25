@@ -16,4 +16,4 @@ Make sure the following **requirements** are installed in your system:
 Then you just need to type `./build.cmd` or `./build.sh` depending on your system to build a local copy
 
 ## Examples
-To run example just type `./build.cmd RunElmishSample` or `./build.sh RunElmishSample`
+To run example just type `./build.cmd target RunElmishSample` or `./build.sh target RunElmishSample`
